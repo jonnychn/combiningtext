@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to Text File</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        #upload-btn {
+            margin-top: 20px;
+        }
+        #download-link {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Upload CSV and Extract Text</h2>
+    <input type="file" id="file-input" accept=".csv">
+    <button id="upload-btn">Process CSV</button>
+   
+    <a id="download-link" href="" download="consolidated_text.txt">Download Consolidated Text</a>
+
+    <script>
+        document.getElementById('upload-btn').addEventListener('click', function () {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+           
+            if (!file) {
+                alert('Please select a CSV file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const csvContent = event.target.result;
+                processCSV(csvContent);
+            };
+            reader.readAsText(file);
+        });
+
+        function processCSV(csv) {
+            const rows = csv.split('\n');
+            let consolidatedText = '';
+
+            rows.forEach(row => {
+                const cells = row.split(',');
+                consolidatedText += cells.join(' ') + '\n';  // Combine all cell contents per row
+            });
+
+            createTextFile(consolidatedText);
+        }
+
+        function createTextFile(content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.getElementById('download-link');
+            link.href = URL.createObjectURL(blob);
+            link.style.display = 'block';  // Show download link
+        }
+    </script>
+
+</body>
+</html>
